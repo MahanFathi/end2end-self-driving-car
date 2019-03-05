@@ -29,8 +29,9 @@ class FeedForward(nn.Module):
             if ff_config['dropout']:
                 dropout = nn.Dropout(p=ff_config['dropout'])
                 self._layers.append(dropout)
+            in_size = ff_config['to_size']
 
-        self.sequential = nn.Sequential(self._layers)
+        self.sequential = nn.Sequential(*self._layers)
 
     def forward(self, x):
         # out = x

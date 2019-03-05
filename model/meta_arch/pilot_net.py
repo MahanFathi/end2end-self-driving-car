@@ -20,20 +20,18 @@ class PilotNet(nn.Module):
                                        cnn_config['kernel'],
                                        cnn_config['stride']),
                              )
-            if cnn_config['pool_kernel']:
-                cnn_layer.append(nn.AvgPool2d(cnn_config['pool_kernel']))
             cnn_layer.append(nn.ELU())
             cnn_layer.append(nn.Dropout2d(p=self.cfg.MODEL.CNN.DROPOUT))
             input_channels = cnn_config['out_channels']
             cnn_layers.extend(cnn_layer)
 
-        self.cnn_backbone = nn.Sequential(cnn_layers)
+        self.cnn_backbone = nn.Sequential(*cnn_layers)
 
         # BUILD FULLY CONNECTED
         self.embedding = FeedForward(self.cfg)
         last_embedding_size = self.cfg.MODEL.FC.LAYERS[-1]['to_size']
         self.to_out = nn.Linear(last_embedding_size, 1)
-        self.feed_forward = nn.Sequential([self.embedding, self.to_out])
+        self.feed_forward = nn.Sequential(self.embedding, self.to_out)
 
         # BUILD LOSS CRITERION
         self.loss_criterion = nn.MSELoss()
@@ -41,8 +39,10 @@ class PilotNet(nn.Module):
     def forward(self, input, targets=None):
         batch_size = input.size(0)
         normalized_input = input / 127.5 - 1
+        normalized_input = normalized_input.permute(0, 3, 1, 2)   # dislocate depth axis
         cnn_features = self.cnn_backbone(normalized_input)
-        predictions = self.feed_forward(cnn_features.view([batch_size, -1]))
+        flattened_features = cnn_features.view([batch_size, -1])
+        predictions = self.feed_forward(flattened_features)
 
         if self.training:
             assert targets is not None

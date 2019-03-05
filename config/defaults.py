@@ -20,42 +20,54 @@ _C.MODEL.WEIGHTS = ""  # should be a path to pth or ckpt file
 _C.MODEL.CNN = CN()
 _C.MODEL.CNN.INPUT_CHANNELS = 3
 _C.MODEL.CNN.LAYERS = [     # Adhere to [out_channels, (kernel_h, kernel_w), stride]
-    {'out_channels': 24, 'kernel': (5, 5), 'stride': 5, 'pool_kernel': (2, 2)},
-    {'out_channels': 36, 'kernel': (5, 5), 'stride': 5, 'pool_kernel': (2, 2)},
-    {'out_channels': 48, 'kernel': (5, 5), 'stride': 5, 'pool_kernel': (2, 2)},
-    {'out_channels': 64, 'kernel': (3, 3), 'stride': 3, 'pool_kernel': None},
-    {'out_channels': 64, 'kernel': (3, 3), 'stride': 3, 'pool_kernel': None},
+    {'out_channels': 24, 'kernel': (5, 5), 'stride': 2, },
+    {'out_channels': 36, 'kernel': (5, 5), 'stride': 2, },
+    {'out_channels': 48, 'kernel': (5, 5), 'stride': 2, },
+    {'out_channels': 64, 'kernel': (3, 3), 'stride': 1, },
+    {'out_channels': 64, 'kernel': (3, 3), 'stride': 1, },
 ]
 _C.MODEL.CNN.DROPOUT = 0.2
 # ---------------------------------------------------------------------------- #
 # __Fully Connected Output Layer
 # ---------------------------------------------------------------------------- #
 _C.MODEL.FC = CN()
-_C.MODEL.FC.INPUT = 123412341234123412341234 # TODO
+_C.MODEL.FC.INPUT = 2304
 _C.MODEL.FC.LAYERS = [             # Adhere to [out_channels, (kernel_h, kernel_w), stride]
     {'to_size': 100, 'dropout': .5, 'norm': False},
     {'to_size': 50, 'dropout': .5, 'norm': False},
     {'to_size': 10, 'dropout': .0, 'norm': False},
 ]
-_C.MODEL.FC.INPUT.LAYERS = []    # a list of hidden layer sizes for output fc. [] means no hidden
-_C.MODEL.FC.INPUT.NORM_LAYERS = [0]     # should be a list of layer indices, example [0, 1, ...]
-_C.MODEL.FC.INPUT.OUT_SIZE = 64     # output size of pre-sequential network, which is the input size of LSTM
 
 # ---------------------------------------------------------------------------- #
 # Input Pipeline Configs
 # ---------------------------------------------------------------------------- #
 _C.INPUT = CN()
-_C.INPUT.BATCH_SIZE = 64
+_C.INPUT.BATCH_SIZE = 256
 
 # ---------------------------------------------------------------------------- #
 # Datasets
 # ---------------------------------------------------------------------------- #
 _C.DATASETS = CN()
-_C.DATASETS.FACTORY = 'RouteLogsDataset'    # dataset class
-_C.DATASETS.TRAIN_PATH = ''                 # path to dataset
-_C.DATASETS.VAL_PATH = ''                   # path to dataset
-_C.DATASETS.TEST_PATH = ''                  # path to dataset
+_C.DATASETS.FACTORY = 'BaladMobileDataset'    # datasets class
+_C.DATASETS.TRAIN_PATH = './driving_dataset'                 # path to datasets
+_C.DATASETS.VAL_PATH = ''                   # path to datasets
+_C.DATASETS.TEST_PATH = ''                  # path to datasets
 _C.DATASETS.SHUFFLE = True                  # load in shuffle fashion
+
+# ---------------------------------------------------------------------------- #
+# Image and Steer parameters
+# ---------------------------------------------------------------------------- #
+_C.IMAGE = CN()
+_C.IMAGE.TARGET_HEIGHT = 70
+_C.IMAGE.TARGET_WIDTH = 200
+_C.IMAGE.CROP_HEIGHT = [70, 256]
+_C.IMAGE.DO_AUGMENTATION = True
+_C.IMAGE.AUGMENTATION_BRIGHTNESS_MIN = 0.2
+_C.IMAGE.AUGMENTATION_BRIGHTNESS_MAX = 1.5
+_C.IMAGE.MIRROR_BIAS = 0.4
+
+_C.STEER = CN()
+_C.STEER.AUGMENTATION_SIGMA = 1.    # yet to be determined
 
 # ---------------------------------------------------------------------------- #
 # Dataloader Configs
@@ -69,7 +81,7 @@ _C.DATALOADER.NUM_WORKERS = 0   # Number of data loading threads
 _C.SOLVER = CN()
 _C.SOLVER.EPOCHS = 100
 
-_C.SOLVER.BASE_LR = 0.001
+_C.SOLVER.BASE_LR = 0.0005
 _C.SOLVER.BIAS_LR_FACTOR = 2
 
 _C.SOLVER.MOMENTUM = 0.9
@@ -93,7 +105,7 @@ _C.OUTPUT.DIR = './output'
 # Log Configs
 # ---------------------------------------------------------------------------- #
 _C.LOG = CN()
-_C.LOG.PERIOD = 100
+_C.LOG.PERIOD = 10
 _C.LOG.PLOT = CN()
 _C.LOG.PLOT.DISPLAY_PORT = 8097
 _C.LOG.PLOT.ITER_PERIOD = 1000  # effective plotting step is _C.LOG.PERIOD * LOG.PLOT.ITER_PERIOD
