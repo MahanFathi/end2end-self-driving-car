@@ -27,7 +27,7 @@ def do_train(
     os.makedirs(output_dir)
 
     # start the training loop
-    for _ in range(cfg.SOLVER.EPOCHS):
+    for epoch in range(cfg.SOLVER.EPOCHS):
         for iteration, (images, steering_commands) in enumerate(dataloader_train):
             images = images.to(device)
             steering_commands = steering_commands.to(device)
@@ -45,8 +45,10 @@ def do_train(
             if iteration % cfg.LOG.PLOT.ITER_PERIOD == 0:
                 visdom.do_plotting()
 
-            if iteration % cfg.LOG.WEIGHTS_SAVE_PERIOD == 0 and iteration:
-                torch.save(model.state_dict(), os.path.join(output_dir, 'weights_{}.pth'.format(str(iteration))))
+            step = epoch * len(dataloader_train) + iteration
+            if step % cfg.LOG.WEIGHTS_SAVE_PERIOD == 0 and iteration:
+                torch.save(model.state_dict(),
+                           os.path.join(output_dir, 'weights_{}.pth'.format(str(step))))
                 do_evaluation(cfg, model, dataloader_evaluation, device)
 
-        torch.save(model.state_dict(), os.path.join(output_dir, 'weights_final.pth'))
+    torch.save(model.state_dict(), os.path.join(output_dir, 'weights_final.pth'))

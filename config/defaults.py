@@ -12,7 +12,7 @@ _C = CN()
 _C.MODEL = CN()
 _C.MODEL.META_ARCHITECTURE = 'PilotNet'
 _C.MODEL.DEVICE = "cuda"
-_C.MODEL.WEIGHTS = ""  # should be a path to pth or ckpt file
+_C.MODEL.WEIGHTS = "./weights_final.pth"  # should be a path to pth or ckpt file
 
 # ---------------------------------------------------------------------------- #
 # __CNN Configs
@@ -81,7 +81,7 @@ _C.DATALOADER.NUM_WORKERS = 0   # Number of data loading threads
 _C.SOLVER = CN()
 _C.SOLVER.EPOCHS = 100
 
-_C.SOLVER.BASE_LR = 0.0005
+_C.SOLVER.BASE_LR = 0.0001
 _C.SOLVER.BIAS_LR_FACTOR = 2
 
 _C.SOLVER.MOMENTUM = 0.9
@@ -106,7 +106,7 @@ _C.OUTPUT.DIR = './output'
 # ---------------------------------------------------------------------------- #
 _C.LOG = CN()
 _C.LOG.PATH = './log'
-_C.LOG.PERIOD = 10
+_C.LOG.PERIOD = 100
 _C.LOG.WEIGHTS_SAVE_PERIOD = 10000
 _C.LOG.PLOT = CN()
 _C.LOG.PLOT.DISPLAY_PORT = 8097

@@ -6,3 +6,4 @@ logs
 log
 !log/place_holder
 driving_dataset
+*.pth
