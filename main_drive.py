@@ -1,13 +1,10 @@
-import signal
-import sys
-
-import subprocess
 import sys
 import time
-from time import sleep
 
 import gi
-from multiprocessing import Value
+
+from drive import Drive
+from motor.client import set_target_degree
 
 gi.require_version("Tcam", "0.1")
 gi.require_version("Gst", "1.0")
@@ -20,10 +17,12 @@ from multiprocessing import Process
 
 display_buffers = []
 
+drive = Drive()
 
-def ask_torch(img_array):
-    # TODO: ask torch
-    return 0
+
+def ask_torch_and_set_motor(img_array):
+    result = drive.forward(img_array)
+    set_target_degree(result)
 
 
 def show_img(display_input, img, display_buffers):
@@ -37,7 +36,7 @@ def show_img(display_input, img, display_buffers):
 counter = 0
 
 
-def callback(sink, display_input, display_buffers, index, lat, lon):
+def callback(sink, display_input, display_buffers, index):
     global counter
     """
     This function will be called in a separate thread when our appsink
@@ -60,6 +59,7 @@ def callback(sink, display_input, display_buffers, index, lat, lon):
 
             # Create a numpy array from the data
             img_array = np.asarray(bytearray(mapinfo.data), dtype=np.uint8)
+            ask_torch_and_set_motor(img_array)
             # Give the array the correct dimensions of the video image
             img = img_array.reshape((height, width, 4))
             counter += 1
@@ -77,7 +77,7 @@ def callback(sink, display_input, display_buffers, index, lat, lon):
     return Gst.FlowReturn.OK
 
 
-def process_method(source, fmt, TARGET_FORMAT, index, lat, lon):
+def process_method(source, fmt, TARGET_FORMAT, index):
     if fmt.get_name() == "video/x-bayer":
         fmt.set_name("video/x-raw")
         fmt.set_value("format", "BGRx")
@@ -121,7 +121,7 @@ def process_method(source, fmt, TARGET_FORMAT, index, lat, lon):
     display_pipeline = Gst.parse_launch("appsrc name=src%s ! videoconvert ! ximagesink" % index)
     display_input = display_pipeline.get_by_name("src%s" % index)
     display_input.set_property("caps", Gst.Caps.from_string(TARGET_FORMAT))
-    output.connect("new-sample", callback, display_input, display_buffers, index, lat, lon)
+    output.connect("new-sample", callback, display_input, display_buffers, index)
     display_pipeline.set_state(Gst.State.PLAYING)
 
     pipeline.set_state(Gst.State.PLAYING)
@@ -134,6 +134,9 @@ def process_method(source, fmt, TARGET_FORMAT, index, lat, lon):
 
     # this stops the pipeline and frees all resources
     pipeline.set_state(Gst.State.NULL)
+    display_pipeline.set_state(Gst.State.NULL)
+    source.set_state(Gst.State.NULL)
+    print('all cleared')
 
 
 def main():
@@ -151,9 +154,7 @@ def main():
     format2 = format2[0]
     TARGET_FORMAT1 = "video/x-raw,width=1920,height=1080,format=RGBx"
     TARGET_FORMAT2 = "video/x-raw,width=2592,height=1944,format=RGBx"
-    lat = Value('d', 0.0)
-    lon = Value('d', 0.0)
-    processes = []
+    # processes = []
     if serials:
         index = 0
         for serial in serials:
@@ -164,15 +165,15 @@ def main():
                 format = format2
                 TARGET_FORMAT = TARGET_FORMAT2
 
-            source = Gst.ElementFactory.make("tcambin")
+            # source = Gst.ElementFactory.make("tcambin")
             source.set_property("serial", serial)
-            sources.append(source)
-            p = Process(target=process_method, args=(source, format, TARGET_FORMAT, index, lat, lon))
-            processes.append(p)
-            p.start()
-
-        for p in processes:
-            p.join()
+            # sources.append(source)
+            # p = Process(target=process_method, args=(source, format, TARGET_FORMAT, index))
+            # processes.append(p)
+            # p.start()
+            process_method(source, format, TARGET_FORMAT, index)
+        # for p in processes:
+        #     p.join()
 
 
 

@@ -46,7 +46,12 @@ void moveThread()
             data ^= 4;
             ioctl(PortFD, PPWDATA, &data);
             usleep(500);
-            currentDir +=step;
+            if (currentDir < targetDir){
+                currentDir +=step;
+            }else{
+                currentDir -=step;
+            }
+
             // cout << "##target dir = " << targetDir << "   current dir = " << currentDir << endl;
         }else{
             usleep(1000); 
