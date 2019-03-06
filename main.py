@@ -25,7 +25,8 @@ def train(cfg):
 
     # build the dataloader
     dataloader_train = make_data_loader(cfg, 'train')
-    dataloader_val = make_data_loader(cfg, 'val')
+    # dataloader_val = make_data_loader(cfg, 'val')
+    dataloader_val = None
 
     # start the training procedure
     do_train(

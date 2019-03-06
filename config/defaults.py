@@ -49,7 +49,7 @@ _C.INPUT.BATCH_SIZE = 256
 # ---------------------------------------------------------------------------- #
 _C.DATASETS = CN()
 _C.DATASETS.FACTORY = 'BaladMobileDataset'                              # datasets class
-_C.DATASETS.TRAIN_PATH = './driving_dataset/train_data'                 # path to datasets
+_C.DATASETS.TRAIN_PATH = '/home/mahan/day_2019_03_06-16/car1/'
 _C.DATASETS.VAL_PATH = './driving_dataset/val_data'                     # path to datasets
 _C.DATASETS.TEST_PATH = ''                                              # path to datasets
 _C.DATASETS.SHUFFLE = True                                              # load in shuffle fashion
@@ -60,10 +60,11 @@ _C.DATASETS.SHUFFLE = True                                              # load i
 _C.IMAGE = CN()
 _C.IMAGE.TARGET_HEIGHT = 70
 _C.IMAGE.TARGET_WIDTH = 200
-_C.IMAGE.CROP_HEIGHT = [70, 256]
+_C.IMAGE.CROP_HEIGHT = [240, 880]
 _C.IMAGE.DO_AUGMENTATION = True
 _C.IMAGE.AUGMENTATION_BRIGHTNESS_MIN = 0.2
 _C.IMAGE.AUGMENTATION_BRIGHTNESS_MAX = 1.5
+_C.IMAGE.AUGMENTATION_DELTA_CORRECTION = 15.
 _C.IMAGE.MIRROR_BIAS = 0.4
 
 _C.STEER = CN()
@@ -118,7 +119,7 @@ _C.LOG.PLOT.ITER_PERIOD = 1000  # effective plotting step is _C.LOG.PERIOD * LOG
 # ---------------------------------------------------------------------------- #
 _C.DRIVE = CN()
 _C.DRIVE.IMAGE = CN()
-_C.DRIVE.IMAGE.CROP_HEIGHT = [70, 256]
+_C.DRIVE.IMAGE.CROP_HEIGHT = [240, 880]
 
 
 def get_cfg_defaults():

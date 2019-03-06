@@ -49,6 +49,6 @@ def do_train(
             if step % cfg.LOG.WEIGHTS_SAVE_PERIOD == 0 and iteration:
                 torch.save(model.state_dict(),
                            os.path.join(output_dir, 'weights_{}.pth'.format(str(step))))
-                do_evaluation(cfg, model, dataloader_evaluation, device)
+                # do_evaluation(cfg, model, dataloader_evaluation, device)
 
     torch.save(model.state_dict(), os.path.join(output_dir, 'weights_final.pth'))

@@ -8,26 +8,36 @@ import numpy as np
 import cv2
 
 
-class DrivingDatasetDataset(object):
+class BaladMobileDataset(object):
     def __init__(self, cfg, data_dir):
         self.cfg = cfg
         self.augment_data = self.cfg.IMAGE.DO_AUGMENTATION
-        self.data_dir = data_dir
-        ann_path = os.path.join(data_dir, './data.txt')
+        self.data_dir = data_dir    # ...6-16/car1/
+        ann_path = os.path.join(data_dir, './data.csv')
         ann_file = open(ann_path, 'r')
-        ann_reader = csv.reader(ann_file, delimiter=' ')
-        self.annotations = dict([r for r in ann_reader])
-        self.mean_ann = np.mean([abs(float(val)) for key, val in self.annotations.items()])
-        self.id_to_filename = dict([(i, key) for i, (key, val) in enumerate(self.annotations.items())])
+        ann_reader = csv.reader(ann_file, delimiter=',')
+        self.annotations = [r for r in ann_reader]
+        self.annotations = self.annotations[1:]     # ignore headers
+        # ANNOTATION -> [front_id, left_id, right_id, steer_angle]
 
     def __getitem__(self, idx):
         while True:
-            steering_command = float(self.annotations[self.id_to_filename[idx]])
+            steering_command = float(self.annotations[idx][-1])
             if abs(steering_command) > 100.:
                 idx = (idx + 1) % len(self.annotations)
             else:
                 break
-        filepath = os.path.join(self.data_dir, self.id_to_filename[idx])
+
+        camera_id = random.choice([0, 1, 2])
+        camera = ['camera_front', 'camera_left', 'camera_right'][camera_id]
+        filepath = os.path.join(self.data_dir, camera, '{}.jpg'.format(self.annotations[idx][camera_id]))
+
+        if camera is 'camera_front':
+            steering_command = steering_command
+        if camera is 'camera_left':
+            steering_command = steering_command + self.cfg.IMAGE.AUGMENTATION_DELTA_CORRECTION
+        if camera is 'camera_right':
+            steering_command = steering_command - self.cfg.IMAGE.AUGMENTATION_DELTA_CORRECTION
 
         image = self._preprocess_img(cv2.imread(filepath))
 
