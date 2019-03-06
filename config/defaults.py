@@ -113,6 +113,14 @@ _C.LOG.PLOT.DISPLAY_PORT = 8097
 _C.LOG.PLOT.ITER_PERIOD = 1000  # effective plotting step is _C.LOG.PERIOD * LOG.PLOT.ITER_PERIOD
 
 
+# ---------------------------------------------------------------------------- #
+# Drive Configs
+# ---------------------------------------------------------------------------- #
+_C.DRIVE = CN()
+_C.DRIVE.IMAGE = CN()
+_C.DRIVE.IMAGE.CROP_HEIGHT = [70, 256]
+
+
 def get_cfg_defaults():
     """Get a yacs CfgNode object with default values for my_project."""
     # Return a clone so that the defaults will not be altered
