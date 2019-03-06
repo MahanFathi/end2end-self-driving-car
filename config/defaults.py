@@ -11,7 +11,8 @@ _C = CN()
 # ---------------------------------------------------------------------------- #
 _C.MODEL = CN()
 _C.MODEL.META_ARCHITECTURE = 'PilotNet'
-_C.MODEL.DEVICE = "cuda"
+_C.MODEL.BACKWARD_META_ARCHITECTURE = 'BackwardPilotNet'
+_C.MODEL.DEVICE = "cpu"
 _C.MODEL.WEIGHTS = "./weights_final.pth"  # should be a path to pth or ckpt file
 
 # ---------------------------------------------------------------------------- #
@@ -39,6 +40,19 @@ _C.MODEL.FC.LAYERS = [             # Adhere to [out_channels, (kernel_h, kernel_
 ]
 
 # ---------------------------------------------------------------------------- #
+# __BACKWARD_CNN Configs
+# ---------------------------------------------------------------------------- #
+_C.MODEL.BACKWARD_CNN = CN()
+_C.MODEL.BACKWARD_CNN.INPUT_CHANNELS = 1
+_C.MODEL.BACKWARD_CNN.LAYERS = [     # Adhere to [out_channels, (kernel_h, kernel_w), stride]
+    {'out_channels': 1, 'kernel': (3, 3), 'stride': 1, },
+    {'out_channels': 1, 'kernel': (3, 3), 'stride': 1, },
+    {'out_channels': 1, 'kernel': (5, 5), 'stride': 2, },
+    {'out_channels': 1, 'kernel': (5, 5), 'stride': 2, },
+    {'out_channels': 1, 'kernel': (5, 5), 'stride': 2, },
+]
+
+# ---------------------------------------------------------------------------- #
 # Input Pipeline Configs
 # ---------------------------------------------------------------------------- #
 _C.INPUT = CN()
@@ -52,6 +66,7 @@ _C.DATASETS.FACTORY = 'BaladMobileDataset'                              # datase
 _C.DATASETS.TRAIN_PATH = './driving_dataset/train_data'                 # path to datasets
 _C.DATASETS.VAL_PATH = './driving_dataset/val_data'                     # path to datasets
 _C.DATASETS.TEST_PATH = ''                                              # path to datasets
+_C.DATASETS.VIS_PATH = './driving_dataset/vis_data'                     # path to datasets
 _C.DATASETS.SHUFFLE = True                                              # load in shuffle fashion
 
 # ---------------------------------------------------------------------------- #
@@ -100,6 +115,8 @@ _C.SOLVER.CHECKPOINT_PATH = os.path.join('.', 'checkpoints')
 # ---------------------------------------------------------------------------- #
 _C.OUTPUT = CN()
 _C.OUTPUT.DIR = './output'
+_C.OUTPUT.VIS_DIR = './output/visualization'
+
 
 # ---------------------------------------------------------------------------- #
 # Log Configs

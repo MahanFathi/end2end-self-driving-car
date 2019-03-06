@@ -37,6 +37,7 @@ def make_data_loader(cfg, mode):
         'train': cfg.DATASETS.TRAIN_PATH,
         'val': cfg.DATASETS.VAL_PATH,
         'test': cfg.DATASETS.TEST_PATH,
+        'visualization': cfg.DATASETS.VIS_PATH,
     }[mode]
     dataset_factory = getattr(datasets, cfg.DATASETS.FACTORY)
 

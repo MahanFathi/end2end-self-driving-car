@@ -4,9 +4,10 @@ from model.layer.feed_forward import FeedForward
 
 
 class PilotNet(nn.Module):
-    def __init__(self, cfg):
+    def __init__(self, cfg, visualizing=False):
         super(PilotNet, self).__init__()
         self.cfg = cfg
+        self.visualizing = visualizing
 
         # BUILD CNN BACKBONE
         cnn_layers = []
@@ -47,5 +48,18 @@ class PilotNet(nn.Module):
             assert targets is not None
             loss = self.loss_criterion(targets, predictions)
             return predictions, loss
+
+        if self.visualizing:
+            activations = []
+            layers_activation = normalized_input
+            for i, module in enumerate(self.cnn_backbone.children()):
+                layers_activation = module(layers_activation)
+                if type(module) == nn.ELU:
+                    layers_activation_temp = layers_activation.clone()
+                    layers_activation_temp = layers_activation_temp.detach()
+                    # TODO average or sum ?
+                    layers_activation_temp = layers_activation_temp.sum(1, keepdim=True)
+                    activations.append(layers_activation_temp)
+            return predictions, activations
 
         return predictions
