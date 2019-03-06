@@ -1,3 +1,6 @@
+import os
+import torch
+from datetime import datetime
 from util.logger import setup_logger
 from util.visdom_plots import VisdomLogger
 
@@ -18,6 +21,8 @@ def do_train(
     logger = setup_logger('balad-mobile.train', False)
     logger.info("Start training")
 
+    output_dir = os.path.join(cfg.LOG.PATH, 'run_{}'.format(datetime.now().strftime("%Y-%m-%d_%H:%M:%S")))
+
     # start the training loop
     for _ in range(cfg.SOLVER.EPOCHS):
         for iteration, (images, steering_commands) in enumerate(dataloader):
@@ -36,3 +41,6 @@ def do_train(
 
             if iteration % cfg.LOG.PLOT.ITER_PERIOD == 0:
                 visdom.do_plotting()
+
+            if iteration % cfg.LOG.WEIGHTS_SAVE_PERIOD == 1:
+                torch.save(model.state_dict(), os.path.join(output_dir, 'weights_{}'.format(str(iteration))))

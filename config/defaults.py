@@ -105,7 +105,9 @@ _C.OUTPUT.DIR = './output'
 # Log Configs
 # ---------------------------------------------------------------------------- #
 _C.LOG = CN()
+_C.LOG.PATH = './log'
 _C.LOG.PERIOD = 10
+_C.LOG.WEIGHTS_SAVE_PERIOD = 10000
 _C.LOG.PLOT = CN()
 _C.LOG.PLOT.DISPLAY_PORT = 8097
 _C.LOG.PLOT.ITER_PERIOD = 1000  # effective plotting step is _C.LOG.PERIOD * LOG.PLOT.ITER_PERIOD

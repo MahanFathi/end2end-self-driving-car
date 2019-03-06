@@ -16,6 +16,10 @@ def train(cfg):
     device = torch.device(cfg.MODEL.DEVICE)
     model.to(device)
 
+    # load last checkpoint
+    if cfg.MODEL.WEIGHTS is not "":
+        model.load_state_dict(torch.load(cfg.MODEL.WEIGHTS))
+
     # build the optimizer
     optimizer = make_optimizer(cfg, model)
 
