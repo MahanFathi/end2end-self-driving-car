@@ -1,5 +1,6 @@
 import os
 import torch
+from model.engine.evaluation import do_evaluation
 from datetime import datetime
 from util.logger import setup_logger
 from util.visdom_plots import VisdomLogger
@@ -8,7 +9,8 @@ from util.visdom_plots import VisdomLogger
 def do_train(
         cfg,
         model,
-        dataloader,
+        dataloader_train,
+        dataloader_evaluation,
         optimizer,
         device
 ):
@@ -22,10 +24,11 @@ def do_train(
     logger.info("Start training")
 
     output_dir = os.path.join(cfg.LOG.PATH, 'run_{}'.format(datetime.now().strftime("%Y-%m-%d_%H:%M:%S")))
+    os.makedirs(output_dir)
 
     # start the training loop
     for _ in range(cfg.SOLVER.EPOCHS):
-        for iteration, (images, steering_commands) in enumerate(dataloader):
+        for iteration, (images, steering_commands) in enumerate(dataloader_train):
             images = images.to(device)
             steering_commands = steering_commands.to(device)
 
@@ -42,5 +45,8 @@ def do_train(
             if iteration % cfg.LOG.PLOT.ITER_PERIOD == 0:
                 visdom.do_plotting()
 
-            if iteration % cfg.LOG.WEIGHTS_SAVE_PERIOD == 1:
-                torch.save(model.state_dict(), os.path.join(output_dir, 'weights_{}'.format(str(iteration))))
+            if iteration % cfg.LOG.WEIGHTS_SAVE_PERIOD == 1 and iteration:
+                torch.save(model.state_dict(), os.path.join(output_dir, 'weights_{}.pth'.format(str(iteration))))
+                do_evaluation(cfg, model, dataloader_evaluation, device)
+
+        torch.save(model.state_dict(), os.path.join(output_dir, 'weights_final.pth'))

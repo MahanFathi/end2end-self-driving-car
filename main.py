@@ -4,7 +4,7 @@ from datetime import datetime
 import torch
 from model import build_model
 from model.solver import make_optimizer
-from model.engine import do_train, do_inference
+from model.engine import do_train, do_evaluation
 from data import make_data_loader
 from config import get_cfg_defaults
 from util.logger import setup_logger
@@ -12,7 +12,7 @@ from util.logger import setup_logger
 
 def train(cfg):
     # build the model
-    model = build_model(cfg, mode='training')
+    model = build_model(cfg)
     device = torch.device(cfg.MODEL.DEVICE)
     model.to(device)
 
@@ -24,24 +24,45 @@ def train(cfg):
     optimizer = make_optimizer(cfg, model)
 
     # build the dataloader
-    dataloader = make_data_loader(cfg, 'train')
+    dataloader_train = make_data_loader(cfg, 'train')
+    dataloader_val = make_data_loader(cfg, 'val')
 
     # start the training procedure
     do_train(
         cfg,
         model,
-        dataloader,
+        dataloader_train,
+        dataloader_val,
         optimizer,
         device
     )
 
 
-def inference(cfg):
-    pass
+def evaluation(cfg, dataset='val'):
+    # build the model
+    model = build_model(cfg)
+    device = torch.device(cfg.MODEL.DEVICE)
+    model.to(device)
+
+    # load last checkpoint
+    assert cfg.MODEL.WEIGHTS is not ""
+    model.load_state_dict(torch.load(cfg.MODEL.WEIGHTS))
+
+    # build the dataloader
+    dataloader = make_data_loader(cfg, dataset)
+
+    # start the inferring procedure
+    do_evaluation(
+        cfg,
+        model,
+        dataloader,
+        device,
+        verbose=True
+    )
 
 
 def main():
-    parser = argparse.ArgumentParser(description="PyTorch ETA RNN Training and Inference.")
+    parser = argparse.ArgumentParser(description="PyTorch Self-driving Car Training and Inference.")
     parser.add_argument(
         "--config-file",
         default="",

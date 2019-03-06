@@ -4,10 +4,9 @@ from model.layer.feed_forward import FeedForward
 
 
 class PilotNet(nn.Module):
-    def __init__(self, cfg, mode):
+    def __init__(self, cfg):
         super(PilotNet, self).__init__()
         self.cfg = cfg
-        self.training = mode == 'training'
 
         # BUILD CNN BACKBONE
         cnn_layers = []
