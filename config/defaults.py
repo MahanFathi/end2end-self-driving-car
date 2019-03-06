@@ -48,11 +48,11 @@ _C.INPUT.BATCH_SIZE = 256
 # Datasets
 # ---------------------------------------------------------------------------- #
 _C.DATASETS = CN()
-_C.DATASETS.FACTORY = 'BaladMobileDataset'    # datasets class
-_C.DATASETS.TRAIN_PATH = './driving_dataset'                 # path to datasets
-_C.DATASETS.VAL_PATH = ''                   # path to datasets
-_C.DATASETS.TEST_PATH = ''                  # path to datasets
-_C.DATASETS.SHUFFLE = True                  # load in shuffle fashion
+_C.DATASETS.FACTORY = 'BaladMobileDataset'                              # datasets class
+_C.DATASETS.TRAIN_PATH = './driving_dataset/train_data'                 # path to datasets
+_C.DATASETS.VAL_PATH = './driving_dataset/val_data'                     # path to datasets
+_C.DATASETS.TEST_PATH = ''                                              # path to datasets
+_C.DATASETS.SHUFFLE = True                                              # load in shuffle fashion
 
 # ---------------------------------------------------------------------------- #
 # Image and Steer parameters
