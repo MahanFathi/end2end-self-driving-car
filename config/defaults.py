@@ -48,8 +48,8 @@ _C.MODEL.BACKWARD_CNN.LAYERS = [     # Adhere to [out_channels, (kernel_h, kerne
     {'out_channels': 1, 'kernel': (3, 3), 'stride': 1, },
     {'out_channels': 1, 'kernel': (3, 3), 'stride': 1, },
     {'out_channels': 1, 'kernel': (5, 5), 'stride': 2, },
-    {'out_channels': 1, 'kernel': (5, 5), 'stride': 2, },
-    {'out_channels': 1, 'kernel': (5, 5), 'stride': 2, },
+    {'out_channels': 1, 'kernel': (5, 6), 'stride': 2, },
+    {'out_channels': 1, 'kernel': (6, 6), 'stride': 2, },
 ]
 
 # ---------------------------------------------------------------------------- #

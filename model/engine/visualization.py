@@ -7,11 +7,12 @@ import multiprocessing as ml
 
 
 def pooling_worker(image, image_mask, path):
+    image = image.permute(0, 3, 1, 2)
     save_path = os.path.join(path + "/res_")
     create_path(os.path.join(save_path.split('/')[0], save_path.split('/')[1]))
     save_image(image, save_path + '_image.png', normalize=True, padding=0)
     save_image(image_mask, save_path + '_backward_segmentation.jpg')
-    image[0, :, :] = image[0, :, :] + 10 * image_mask[0, :, :]
+    image[0, :, :] = image[0, :, :] + 100 * image_mask[0, :, :]
     save_image(image, save_path + '_visualization.jpg', normalize=True, padding=0)
 
 

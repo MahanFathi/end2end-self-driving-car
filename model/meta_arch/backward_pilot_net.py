@@ -12,10 +12,10 @@ class BackwardPilotNet(nn.Module):
         input_channels = self.cfg.MODEL.BACKWARD_CNN.INPUT_CHANNELS
         cnn_configs = self.cfg.MODEL.BACKWARD_CNN.LAYERS
         for cnn_config in cnn_configs:
-            cnn_layer = nn.ConvTranspose2d(input_channels,
-                                           cnn_config['out_channels'],
-                                           cnn_config['kernel'],
-                                           stride=cnn_config['stride'])
+            cnn_layer = nn.ConvTranspose2d(in_channels=input_channels,
+                                           out_channels=cnn_config['out_channels'],
+                                           kernel_size=cnn_config['kernel'],
+                                           stride=cnn_config['stride'],)
 
             input_channels = cnn_config['out_channels']
             cnn_layers.append(cnn_layer)
@@ -30,10 +30,9 @@ class BackwardPilotNet(nn.Module):
                 module.bias.requires_grad = False
 
     def forward(self, activations, targets=None):
-
         last_activation = torch.ones_like(activations[-1])
         for back_op, activation in zip(self.backward_layers, reversed(activations)):
-            summation = torch.mul(back_op(last_activation), activation)
+            summation = back_op(torch.mul(last_activation, activation))
             last_activation = summation
             last_activation = self.normalization(last_activation)
         return last_activation
