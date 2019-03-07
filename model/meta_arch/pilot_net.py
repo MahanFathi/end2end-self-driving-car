@@ -14,14 +14,12 @@ class PilotNet(nn.Module):
         input_channels = self.cfg.MODEL.CNN.INPUT_CHANNELS
         cnn_configs = self.cfg.MODEL.CNN.LAYERS
         for cnn_config in cnn_configs:
-            cnn_layer = []
-            cnn_layer.append(nn.Conv2d(input_channels,
-                                       cnn_config['out_channels'],
-                                       cnn_config['kernel'],
-                                       cnn_config['stride']),
-                             )
-            cnn_layer.append(nn.ELU())
-            cnn_layer.append(nn.Dropout2d(p=self.cfg.MODEL.CNN.DROPOUT))
+            cnn_layer = [nn.Conv2d(input_channels,
+                                   cnn_config['out_channels'],
+                                   cnn_config['kernel'],
+                                   cnn_config['stride']),
+                         nn.ELU(),
+                         nn.Dropout2d(p=self.cfg.MODEL.CNN.DROPOUT)]
             input_channels = cnn_config['out_channels']
             cnn_layers.extend(cnn_layer)
 
@@ -57,8 +55,8 @@ class PilotNet(nn.Module):
                 if type(module) == nn.ELU:
                     layers_activation_temp = layers_activation.clone()
                     layers_activation_temp = layers_activation_temp.detach()
-                    # TODO average or sum ?
-                    layers_activation_temp = layers_activation_temp.sum(1, keepdim=True)
+                    # TODO mean or sum ?
+                    layers_activation_temp = layers_activation_temp.mean(1, keepdim=True)
                     activations.append(layers_activation_temp)
             return predictions, activations
 

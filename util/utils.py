@@ -103,4 +103,5 @@ def save_image(tensor, filename, nrow=8, padding=2,
                      normalize=normalize, range=range, scale_each=scale_each)
     ndarr = grid.mul(255).clamp(0, 255).byte().permute(1, 2, 0).cpu().numpy()
     im = Image.fromarray(ndarr)
+    im = im.resize((im.size[0] * 5, im.size[1] * 5), Image.ANTIALIAS)
     im.save(filename)

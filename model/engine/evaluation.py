@@ -14,7 +14,7 @@ def do_evaluation(
     logger.info("Start evaluating")
 
     loss_records = []
-    for iteration, (images, steering_commands) in tqdm(enumerate(dataloader)):
+    for iteration, (images, steering_commands, _) in tqdm(enumerate(dataloader)):
         images = images.to(device)
         steering_commands = steering_commands.to(device)
         predictions, loss = model(images, steering_commands)

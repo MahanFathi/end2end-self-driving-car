@@ -74,7 +74,7 @@ def visualization(cfg, dataset='visualization'):
 
     # load last checkpoint
     assert cfg.MODEL.WEIGHTS is not ""
-    model.load_state_dict(torch.load(cfg.MODEL.WEIGHTS, map_location={'cuda:0': 'cpu'}))
+    model.load_state_dict(torch.load(cfg.MODEL.WEIGHTS))
 
     # build the dataloader
     dataloader = make_data_loader(cfg, dataset)
@@ -130,6 +130,9 @@ def main():
     logger.info("Running with config:\n{}".format(cfg))
 
     # TRAIN
+    train(cfg)
+
+    # Visualize
     visualization(cfg)
 
 

@@ -28,7 +28,7 @@ def do_train(
 
     # start the training loop
     for epoch in range(cfg.SOLVER.EPOCHS):
-        for iteration, (images, steering_commands) in enumerate(dataloader_train):
+        for iteration, (images, steering_commands, _) in enumerate(dataloader_train):
             images = images.to(device)
             steering_commands = steering_commands.to(device)
 

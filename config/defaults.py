@@ -12,7 +12,7 @@ _C = CN()
 _C.MODEL = CN()
 _C.MODEL.META_ARCHITECTURE = 'PilotNet'
 _C.MODEL.BACKWARD_META_ARCHITECTURE = 'BackwardPilotNet'
-_C.MODEL.DEVICE = "cpu"
+_C.MODEL.DEVICE = "cuda"
 _C.MODEL.WEIGHTS = "./weights_final.pth"  # should be a path to pth or ckpt file
 
 # ---------------------------------------------------------------------------- #
