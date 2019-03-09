@@ -18,12 +18,12 @@ def make_batch_data_sampler(sampler, batch_size):
 
 def collator(batch):
     transposed_batch = list(zip(*batch))
-    images, steering_commands = transposed_batch
+    images, steering_commands, paths = transposed_batch
 
     tensor_images = torch.stack(images)
     tensor_steering_commands = torch.stack(steering_commands)
 
-    return tensor_images, tensor_steering_commands
+    return tensor_images, tensor_steering_commands, paths
 
 
 def make_data_loader(cfg, mode):
@@ -37,6 +37,7 @@ def make_data_loader(cfg, mode):
         'train': cfg.DATASETS.TRAIN_PATH,
         'val': cfg.DATASETS.VAL_PATH,
         'test': cfg.DATASETS.TEST_PATH,
+        'visualization': cfg.DATASETS.VIS_PATH,
     }[mode]
     dataset_factory = getattr(datasets, cfg.DATASETS.FACTORY)
 

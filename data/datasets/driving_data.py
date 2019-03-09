@@ -51,7 +51,7 @@ class DrivingDatasetDataset(object):
         image = torch.from_numpy(image)
         steering_command = torch.tensor([steering_command])
 
-        return image, steering_command
+        return image, steering_command, self.id_to_filename[idx].split(".")[0]
 
     def __len__(self):
         return len(self.annotations)

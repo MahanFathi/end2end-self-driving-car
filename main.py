@@ -2,9 +2,9 @@ import os
 import argparse
 from datetime import datetime
 import torch
-from model import build_model
+from model import build_model, build_backward_model
 from model.solver import make_optimizer
-from model.engine import do_train, do_evaluation
+from model.engine import do_train, do_evaluation, do_visualization
 from data import make_data_loader
 from config import get_cfg_defaults
 from util.logger import setup_logger
@@ -62,6 +62,35 @@ def evaluation(cfg, dataset='val'):
     )
 
 
+def visualization(cfg, dataset='visualization'):
+    # build the model
+    model = build_model(cfg, visualizing=True)
+    backward_model = build_backward_model(cfg)
+    model.eval()
+    backward_model.eval()
+
+    device = torch.device(cfg.MODEL.DEVICE)
+    model.to(device)
+    backward_model.to(device)
+
+    # load last checkpoint
+    assert cfg.MODEL.WEIGHTS is not ""
+    model.load_state_dict(torch.load(cfg.MODEL.WEIGHTS))
+
+    # build the dataloader
+    dataloader = make_data_loader(cfg, dataset)
+
+    # start the visualization procedure
+    do_visualization(
+        cfg,
+        model,
+        backward_model,
+        dataloader,
+        device,
+        verbose=True
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description="PyTorch Self-driving Car Training and Inference.")
     parser.add_argument(
@@ -103,6 +132,9 @@ def main():
 
     # TRAIN
     train(cfg)
+
+    # Visualize
+    visualization(cfg)
 
 
 if __name__ == "__main__":

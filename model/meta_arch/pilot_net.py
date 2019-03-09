@@ -4,23 +4,22 @@ from model.layer.feed_forward import FeedForward
 
 
 class PilotNet(nn.Module):
-    def __init__(self, cfg):
+    def __init__(self, cfg, visualizing=False):
         super(PilotNet, self).__init__()
         self.cfg = cfg
+        self.visualizing = visualizing
 
         # BUILD CNN BACKBONE
         cnn_layers = []
         input_channels = self.cfg.MODEL.CNN.INPUT_CHANNELS
         cnn_configs = self.cfg.MODEL.CNN.LAYERS
         for cnn_config in cnn_configs:
-            cnn_layer = []
-            cnn_layer.append(nn.Conv2d(input_channels,
-                                       cnn_config['out_channels'],
-                                       cnn_config['kernel'],
-                                       cnn_config['stride']),
-                             )
-            cnn_layer.append(nn.ELU())
-            cnn_layer.append(nn.Dropout2d(p=self.cfg.MODEL.CNN.DROPOUT))
+            cnn_layer = [nn.Conv2d(input_channels,
+                                   cnn_config['out_channels'],
+                                   cnn_config['kernel'],
+                                   cnn_config['stride']),
+                         nn.ELU(),
+                         nn.Dropout2d(p=self.cfg.MODEL.CNN.DROPOUT)]
             input_channels = cnn_config['out_channels']
             cnn_layers.extend(cnn_layer)
 
@@ -47,5 +46,18 @@ class PilotNet(nn.Module):
             assert targets is not None
             loss = self.loss_criterion(targets, predictions)
             return predictions, loss
+
+        if self.visualizing:
+            activations = []
+            layers_activation = normalized_input
+            for i, module in enumerate(self.cnn_backbone.children()):
+                layers_activation = module(layers_activation)
+                if type(module) == nn.ELU:
+                    layers_activation_temp = layers_activation.clone()
+                    layers_activation_temp = layers_activation_temp.detach()
+                    # TODO mean or sum ?
+                    layers_activation_temp = layers_activation_temp.mean(1, keepdim=True)
+                    activations.append(layers_activation_temp)
+            return predictions, activations
 
         return predictions
