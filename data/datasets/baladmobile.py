@@ -9,7 +9,7 @@ import cv2
 
 
 class BaladMobileDataset(object):
-    def __init__(self, cfg, data_dir):
+    def __init__(self, cfg, data_dir, ann_path=None):
         self.cfg = cfg
         self.augment_data = self.cfg.IMAGE.DO_AUGMENTATION
         self.data_dir = data_dir    # ...6-16/car1/
@@ -61,7 +61,9 @@ class BaladMobileDataset(object):
         image = torch.from_numpy(image)
         steering_command = torch.tensor([steering_command])
 
-        return image, steering_command
+        path_to_image = self.id_to_filename[idx].split(".")[0]
+
+        return image, steering_command, path_to_image
 
     def __len__(self):
         return len(self.annotations)

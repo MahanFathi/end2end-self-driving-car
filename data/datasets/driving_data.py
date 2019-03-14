@@ -6,16 +6,17 @@ import torch
 import csv
 import numpy as np
 import cv2
+from util.prepare_driving_dataset import prepare_driving_dataset
 
 
 class DrivingDatasetDataset(object):
-    def __init__(self, cfg, data_dir):
+    def __init__(self, cfg, data_dir, ann_path):
         self.cfg = cfg
+        prepare_driving_dataset(cfg)
         self.augment_data = self.cfg.IMAGE.DO_AUGMENTATION
         self.data_dir = data_dir
-        ann_path = os.path.join(data_dir, './data.txt')
         ann_file = open(ann_path, 'r')
-        ann_reader = csv.reader(ann_file, delimiter=' ')
+        ann_reader = csv.reader(ann_file, delimiter=',')
         self.annotations = dict([r for r in ann_reader])
         self.mean_ann = np.mean([abs(float(val)) for key, val in self.annotations.items()])
         self.id_to_filename = dict([(i, key) for i, (key, val) in enumerate(self.annotations.items())])

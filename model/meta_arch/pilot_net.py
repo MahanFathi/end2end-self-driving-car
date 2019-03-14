@@ -55,7 +55,6 @@ class PilotNet(nn.Module):
                 if type(module) == nn.ELU:
                     layers_activation_temp = layers_activation.clone()
                     layers_activation_temp = layers_activation_temp.detach()
-                    # TODO mean or sum ?
                     layers_activation_temp = layers_activation_temp.mean(1, keepdim=True)
                     activations.append(layers_activation_temp)
             return predictions, activations

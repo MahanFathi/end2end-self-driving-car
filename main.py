@@ -40,7 +40,6 @@ def train(cfg):
 
 
 def evaluation(cfg, dataset='val'):
-    # build the model
     model = build_model(cfg)
     device = torch.device(cfg.MODEL.DEVICE)
     model.to(device)
@@ -62,23 +61,23 @@ def evaluation(cfg, dataset='val'):
     )
 
 
-def visualization(cfg, dataset='visualization'):
+def visualization(cfg):
     # build the model
     model = build_model(cfg, visualizing=True)
     backward_model = build_backward_model(cfg)
-    model.eval()
-    backward_model.eval()
 
     device = torch.device(cfg.MODEL.DEVICE)
     model.to(device)
     backward_model.to(device)
+    model.eval()
+    backward_model.eval()
 
     # load last checkpoint
     assert cfg.MODEL.WEIGHTS is not ""
     model.load_state_dict(torch.load(cfg.MODEL.WEIGHTS))
 
     # build the dataloader
-    dataloader = make_data_loader(cfg, dataset)
+    dataloader = make_data_loader(cfg, 'vis')
 
     # start the visualization procedure
     do_visualization(
@@ -87,7 +86,6 @@ def visualization(cfg, dataset='visualization'):
         backward_model,
         dataloader,
         device,
-        verbose=True
     )
 
 
@@ -131,7 +129,7 @@ def main():
     logger.info("Running with config:\n{}".format(cfg))
 
     # TRAIN
-    train(cfg)
+    # train(cfg)
 
     # Visualize
     visualization(cfg)
