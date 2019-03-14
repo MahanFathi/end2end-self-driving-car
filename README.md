@@ -3,6 +3,7 @@
 ### This repo contains:
 * Implementation of [NVIDIA's DAVE-2](https://arxiv.org/pdf/1604.07316.pdf) neural network in pure PyTorch (PilotNet)
 * Data augmentation in train-feed pipeline
+* Online monitoring of the training process via Visdom
 * [VisualBackProp](https://arxiv.org/pdf/1611.05418.pdf) if it's of any help to sanity-checking the network
 * Downloads all the data you need for your first run 
 * Easy-tweaking configurations
