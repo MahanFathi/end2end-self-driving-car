@@ -30,19 +30,18 @@ def make_data_loader(cfg, mode):
     """Make a dataloader.
 
     :param cfg: CfgNode containing the configurations of everything.
-    :param mode: str in ['train', 'val', 'test']
+    :param mode: str in ['train', 'val', 'vis']
     :return: dataloader: torch.utils.data.DataLoader
     """
-    dataset_path = {
-        'train': cfg.DATASETS.TRAIN_PATH,
-        'val': cfg.DATASETS.VAL_PATH,
-        'test': cfg.DATASETS.TEST_PATH,
-        'visualization': cfg.DATASETS.VIS_PATH,
+    annotation_path = {
+        'train': cfg.DATASETS.ANN_TRAIN_PATH,
+        'val': cfg.DATASETS.ANN_VAL_PATH,
+        'vis': cfg.DATASETS.ANN_VIS_PATH,
     }[mode]
     dataset_factory = getattr(datasets, cfg.DATASETS.FACTORY)
 
     # Make the datasets
-    dataset = dataset_factory(cfg, dataset_path)
+    dataset = dataset_factory(cfg, cfg.DATASETS.DATA_DIR, annotation_path)
 
     # Make the sampler
     sampler = make_data_sampler(dataset, cfg.DATASETS.SHUFFLE)

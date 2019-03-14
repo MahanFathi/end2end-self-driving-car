@@ -6,6 +6,7 @@ class BackwardPilotNet(nn.Module):
     def __init__(self, cfg):
         super(BackwardPilotNet, self).__init__()
         self.cfg = cfg
+        self.device = torch.device(self.cfg.MODEL.DEVICE)
 
         # BUILD CNN BACKBONE
         cnn_layers = []
@@ -18,6 +19,7 @@ class BackwardPilotNet(nn.Module):
                                            stride=cnn_config['stride'],)
 
             input_channels = cnn_config['out_channels']
+            cnn_layer.to(self.device)
             cnn_layers.append(cnn_layer)
 
         self.backward_layers = cnn_layers
@@ -30,7 +32,7 @@ class BackwardPilotNet(nn.Module):
                 module.bias.requires_grad = False
 
     def forward(self, activations, targets=None):
-        last_activation = torch.ones_like(activations[-1])
+        last_activation = torch.ones_like(activations[-1]).to(self.device)
         for back_op, activation in zip(self.backward_layers, reversed(activations)):
             summation = back_op(torch.mul(last_activation, activation))
             last_activation = summation
@@ -45,7 +47,3 @@ class BackwardPilotNet(nn.Module):
         tensor = torch.div(tensor, omax.expand(tensor.size(0), tensor.size(1), tensor.size(2), tensor.size(3)))
         return tensor
 
-    # TODO ??
-    # def normalize(self, img, min, max):
-    #     img.clamp_(min=min, max=max)
-    #     img.add_(-min).div_(max - min + 1e-5)

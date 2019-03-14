@@ -62,12 +62,12 @@ _C.INPUT.BATCH_SIZE = 256
 # Datasets
 # ---------------------------------------------------------------------------- #
 _C.DATASETS = CN()
-_C.DATASETS.FACTORY = 'BaladMobileDataset'                              # datasets class
-_C.DATASETS.TRAIN_PATH = '/home/mahan/day_2019_03_06-16/car1/'
-_C.DATASETS.VAL_PATH = './driving_dataset/val_data'                     # path to datasets
-_C.DATASETS.TEST_PATH = ''                                              # path to datasets
-_C.DATASETS.VIS_PATH = './driving_dataset/vis_data'                     # path to datasets
-_C.DATASETS.SHUFFLE = True                                              # load in shuffle fashion
+_C.DATASETS.FACTORY = 'DrivingDatasetDataset'               # datasets class
+_C.DATASETS.DATA_DIR = './driving_dataset'                  # path to dataset
+_C.DATASETS.ANN_TRAIN_PATH = './driving_dataset/train.csv'  # path to annotation csv
+_C.DATASETS.ANN_VAL_PATH = './driving_dataset/val.csv'      # path to annotation csv
+_C.DATASETS.ANN_VIS_PATH = './driving_dataset/vis.csv'      # path to annotation csv
+_C.DATASETS.SHUFFLE = True                                  # load in shuffle fashion
 
 # ---------------------------------------------------------------------------- #
 # Image and Steer parameters
@@ -75,7 +75,7 @@ _C.DATASETS.SHUFFLE = True                                              # load i
 _C.IMAGE = CN()
 _C.IMAGE.TARGET_HEIGHT = 70
 _C.IMAGE.TARGET_WIDTH = 200
-_C.IMAGE.CROP_HEIGHT = [240, 880]
+_C.IMAGE.CROP_HEIGHT = [70, 256]
 _C.IMAGE.DO_AUGMENTATION = True
 _C.IMAGE.AUGMENTATION_BRIGHTNESS_MIN = 0.2
 _C.IMAGE.AUGMENTATION_BRIGHTNESS_MAX = 1.5
