@@ -129,7 +129,7 @@ def main():
     logger.info("Running with config:\n{}".format(cfg))
 
     # TRAIN
-    # train(cfg)
+    train(cfg)
 
     # Visualize
     visualization(cfg)
